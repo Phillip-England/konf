@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konf | Configuration Management CLI</title>
+    <style>
+        :root {
+            --bg-primary: #1a1b26;
+            --bg-secondary: #24283b;
+            --text-primary: #c0caf5;
+            --text-secondary: #9aa5ce;
+            --accent: #7aa2f7;
+            --accent-hover: #5d87e5;
+            --success: #9ece6a;
+            --warning: #e0af68;
+            --code-bg: #16161e;
+            --border: #414868;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .badges {
+            margin-top: 1rem;
+            display: flex;
+            gap: 10px;
+        }
+
+        .badge {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            color: #fff;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--success);
+        }
+
+        p code {
+            background-color: var(--bg-secondary);
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: var(--text-primary);
+        }
+
+        /* Command Tables */
+        .cmd-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .cmd-table th, .cmd-table td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cmd-table th {
+            background-color: #1f2335;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .cmd-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .flag {
+            color: var(--warning);
+            font-family: var(--font-mono);
+        }
+
+        /* File Structure Tree */
+        .tree {
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .tree-item {
+            padding: 2px 0;
+        }
+        
+        .tree-dir {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>konf</h1>
+        <p class="subtitle">A configuration management CLI intended to remove the need to memorize config syntax.</p>
+        <div class="badges">
+            <span class="badge">Go 1.25.5</span>
+            <span class="badge">License: MIT (Implied)</span>
+            <span class="badge">Author: Phillip England</span>
+        </div>
+    </header>
+
+    <main>
+        <section id="overview">
+            <h2>Overview</h2>
+            <p><strong>Konf</strong> is a Command Line Interface tool designed to generate and manage configuration files for various systems. Currently, it features robust support for <strong>Caddy</strong> web server configurations, allowing developers to generate `Caddyfile` blocks for static sites, reverse proxies, rate limiting, and upload limits without manually editing configuration files.</p>
+        </section>
+
+        <section id="installation">
+            <h2>Installation</h2>
+            <p>Ensure you have Go installed on your system. You can install `konf` directly from the source:</p>
+            <pre><code>go install github.com/phillip-england/konf@latest</code></pre>
+            <p>Or clone the repository and build locally:</p>
+            <pre><code>git clone https://github.com/Phillip-England/konf.git
+cd konf
+go build -o konf main.go</code></pre>
+        </section>
+
+        <section id="usage">
+            <h2>Usage</h2>
+            <p>The general syntax is <code>konf [command] [subcommand] [flags]</code>.</p>
+
+            <h3>Initialization</h3>
+            <p>Initialize a new `Caddyfile` in the current directory.</p>
+            <pre><code>konf caddy init</code></pre>
+            <table class="cmd-table">
+                <thead>
+                    <tr>
+                        <th>Flag</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="flag">-f, --force</td>
+                        <td>Overwrite existing Caddyfile if it exists</td>
+                        <td>false</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Adding a Static Site</h3>
+            <p>Add a basic file server block for a specific host.</p>
+            <pre><code>konf caddy add site example.com --root ./public</code></pre>
+            <table class="cmd-table">
+                <thead>
+                    <tr>
+                        <th>Argument/Flag</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="flag">&lt;host&gt;</td>
+                        <td>The domain name (e.g., localhost, example.com)</td>
+                    </tr>
+                    <tr>
+                        <td class="flag">--root</td>
+                        <td>(Optional) The root path for the file server</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Adding a Reverse Proxy</h3>
+            <p>Forward traffic from a host to an upstream service.</p>
+            <pre><code>konf caddy add proxy api.example.com localhost:8080</code></pre>
+            <table class="cmd-table">
+                <thead>
+                    <tr>
+                        <th>Argument</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="flag">&lt;host&gt;</td>
+                        <td>The domain name</td>
+                    </tr>
+                    <tr>
+                        <td class="flag">&lt;upstream&gt;</td>
+                        <td>The upstream destination (e.g., localhost:3000)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Adding Rate Limiting</h3>
+            <p>Apply rate limits to a host. <em>Note: This requires a Caddy build with the rate-limit plugin.</em></p>
+            <pre><code>konf caddy add rate-limit api.example.com --events 100 --window 1m</code></pre>
+            <table class="cmd-table">
+                <thead>
+                    <tr>
+                        <th>Flag</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="flag">--events</td>
+                        <td>Events allowed per window</td>
+                        <td>100</td>
+                    </tr>
+                    <tr>
+                        <td class="flag">--window</td>
+                        <td>Window duration (e.g., 1m, 10s)</td>
+                        <td>1m</td>
+                    </tr>
+                    <tr>
+                        <td class="flag">--burst</td>
+                        <td>Burst allowance</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td class="flag">--zone</td>
+                        <td>Rate limit zone name</td>
+                        <td>default</td>
+                    </tr>
+                    <tr>
+                        <td class="flag">--match</td>
+                        <td>Optional path matcher (e.g., /api/*)</td>
+                        <td>(empty)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Adding Upload Limits</h3>
+            <p>Restrict the maximum request body size (file uploads).</p>
+            <pre><code>konf caddy add upload-limit files.example.com --max 10MB</code></pre>
+            <table class="cmd-table">
+                <thead>
+                    <tr>
+                        <th>Flag</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="flag">--max</td>
+                        <td>Max upload size (Required, e.g., 10MB)</td>
+                    </tr>
+                    <tr>
+                        <td class="flag">--match</td>
+                        <td>Optional path matcher (e.g., /upload/*)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="structure">
+            <h2>Project Structure</h2>
+            <div class="tree">
+                <div class="tree-item"><span class="tree-dir">konf/</span></div>
+                <div class="tree-item">├── <span class="tree-dir">cmd/</span> (CLI Command Definitions)</div>
+                <div class="tree-item">│   ├── caddy.go</div>
+                <div class="tree-item">│   ├── caddy_add.go</div>
+                <div class="tree-item">│   ├── caddy_add_proxy.go</div>
+                <div class="tree-item">│   ├── caddy_add_rate_limit.go</div>
+                <div class="tree-item">│   ├── caddy_add_site.go</div>
+                <div class="tree-item">│   ├── caddy_add_upload_limit.go</div>
+                <div class="tree-item">│   ├── caddy_init.go</div>
+                <div class="tree-item">│   └── root.go</div>
+                <div class="tree-item">├── <span class="tree-dir">internal/</span> (Core Logic)</div>
+                <div class="tree-item">│   └── <span class="tree-dir">caddy/</span></div>
+                <div class="tree-item">│       ├── manager.go (File I/O & Block Generation)</div>
+                <div class="tree-item">│       └── templates.go</div>
+                <div class="tree-item">├── go.mod</div>
+                <div class="tree-item">└── main.go</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Generated based on repository state as of January 2026.</p>
+        <p><a href="https://github.com/Phillip-England/konf">View on GitHub</a></p>
+    </footer>
+</div>
+
+</body>
+</html>
